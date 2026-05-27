@@ -35,6 +35,8 @@ Bounding boxes should be stored in COCO `[x, y, width, height]` pixel format. Th
 
 ## Dependencies
 
+This project requires Python 3.11 or newer.
+
 Install the main dependencies with `uv`:
 
 ```bash

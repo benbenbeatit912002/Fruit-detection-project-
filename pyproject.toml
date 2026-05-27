@@ -3,7 +3,7 @@ name = "fruit-detection-project"
 version = "0.1.0"
 description = "Single-stage fruit detection notebook using a multi-scale ResNet detector."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "torch",
     "torchvision",
