@@ -1,0 +1,8 @@
+torch
+torchvision
+torchmetrics
+scipy
+tqdm
+matplotlib
+pillow
+git+https://github.com/drapado/d2l-wur.git

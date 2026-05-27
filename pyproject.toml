@@ -1,0 +1,19 @@
+[project]
+name = "fruit-detection-project"
+version = "0.1.0"
+description = "Single-stage fruit detection notebook using a multi-scale ResNet detector."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch",
+    "torchvision",
+    "torchmetrics",
+    "scipy",
+    "tqdm",
+    "matplotlib",
+    "pillow",
+    "d2l @ git+https://github.com/drapado/d2l-wur.git",
+]
+
+[tool.uv]
+package = false
