@@ -2,10 +2,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import numpy as np
+from PIL import Image
 import torch
 
 from comparison.dual import ObjectDetectorMultiScale, detection_loss
-from comparison.evaluation import Geometry, postprocess, score
+from comparison.evaluation import Geometry, postprocess, preprocess, score
 from comparison.prepare import decode_rows, yolo_row
 from object_detection_utils import HungarianMatcher
 
@@ -57,6 +59,17 @@ class ComparisonTests(unittest.TestCase):
             scale = xyxy.new_tensor([geo.scaled_w / geo.width, geo.scaled_h / geo.height] * 2)
             padded = xyxy * scale + xyxy.new_tensor([geo.left, geo.top] * 2)
             torch.testing.assert_close(geo.original_boxes(padded), xyxy)
+
+    def test_yolo_preprocessing_matches_official_letterbox(self):
+        from ultralytics.data.augment import LetterBox
+        pixels = np.random.default_rng(42).integers(0, 256, (561, 1001, 3), dtype=np.uint8)
+        native = LetterBox(new_shape=(512, 512), auto=False)(image=pixels)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "odd.png"
+            Image.fromarray(pixels).save(path)
+            batch, geo = preprocess(path, yolo=True, device="cpu")
+        self.assertEqual(geo.top, 112)
+        np.testing.assert_array_equal((batch[0].permute(1, 2, 0).numpy() * 255).round().astype("uint8"), native)
 
     def test_missing_detections_and_background_fp_reduce_common_ap(self):
         box = torch.tensor([[10., 10., 20., 20.]])

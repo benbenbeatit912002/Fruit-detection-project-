@@ -1,0 +1,82 @@
+{
+  "source_commit": "93a113d00ec6263fc3d0346fdeed632688ed0bd2",
+  "reference_commit": "d48699f",
+  "source_sha256_lf": {
+    "comparison/dual.py": "757c301f5b7a398ffdc53d097f25e797bc6a62622ce98125f8b7bc49fafb33c6",
+    "comparison/evaluation.py": "52fae7c64d3d221b74f617d54b2a49ed069a06968ffc26d597b5233ef9313c01",
+    "comparison/measure.py": "3bc31aa1303a55ce4ef21e4c6fa0f71f2796fa09b91d649111d6ebb9811fc8da",
+    "comparison/prepare.py": "410b05af6d5b0be7829e639a032fbed184f9c7d6ad1d2a1c80e83c31b40ad729",
+    "comparison/train.py": "7ccb5cc940243620e63c859b4342a7b74033d5c691e7664dc14b4079d08f777b",
+    "comparison/transforms.py": "e4d602f72a412c08f6943e4a4e877cd214b23ccf5943be6bbaa5c44b6be90066",
+    "comparison/yolo.py": "f22d90d6cffe945adfe0d310856166688f05192a9fc13693e89d91f2bb9cc20a",
+    "comparison/__init__.py": "6310be632dddd4ed6c14c370719924ec0edfea54833fecbda62836ba7b1e2433",
+    "object_detection_utils.py": "a8819d1c714f50a7306db20122d67eb1d92e1bb72205e0f00ca4461d90022d49",
+    "scripts/run_notebook.py": "3d14af282b7544e4a30a032f3421c027bc431e6459eb4b5b5501833595ac0cbd",
+    "comparison/uv.lock": "e003324c40a259aaef1a2d137ac9ce614e33741b14ef8ff0b0fc7566fdbd3fbd",
+    "comparison/data.yaml": "27489effda1410382c3dbee9b842ddbbc519ca1cdf3232f7de6ae4181f38f760"
+  },
+  "hardware": {
+    "name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "compute_capability": [
+      12,
+      0
+    ],
+    "memory_bytes": 8546484224,
+    "driver": "581.42",
+    "torch_cuda": "12.8",
+    "cudnn": 91002,
+    "cuda_available": true,
+    "platform": "Windows",
+    "python": "3.11.15"
+  },
+  "packages": {
+    "torch": "2.10.0+cu128",
+    "torchvision": "0.25.0+cu128",
+    "ultralytics": "8.3.253",
+    "torchmetrics": "1.9.0",
+    "pycocotools": "2.0.11",
+    "numpy": "2.4.6",
+    "Pillow": "13.0.0",
+    "opencv-python": "5.1.0.95",
+    "scipy": "1.17.1",
+    "matplotlib": "3.11.2"
+  },
+  "dataset": {
+    "train": {
+      "images": 218,
+      "instances": 1603,
+      "instances_per_class": {
+        "apple": 403,
+        "banana": 290,
+        "orange": 472,
+        "pear": 438
+      },
+      "annotations_sha256": "fcfdca7dbcf85721095e9b4f218d4c70d4143d45ae4fe85aa96cb71551330c90",
+      "image_manifest_sha256": "ce1f1290dd9eaa8e94d81e76b68318fa5c0c7ce70cab5ce4c89a2fb1bd8c36ea",
+      "yolo_labels_sha256": "9feada24b83c4e5c8137ce0fe957b001710efab772fe200fa9a59abb1b06644f",
+      "max_roundtrip_error_px": 4.800006081495667e-08
+    },
+    "val": {
+      "images": 10,
+      "instances": 72,
+      "instances_per_class": {
+        "apple": 25,
+        "banana": 17,
+        "orange": 15,
+        "pear": 15
+      },
+      "annotations_sha256": "ea67417ec74e43dd22867bb6d40a45e55d4d36d9adcdf976d6c04601f6e3b64d",
+      "image_manifest_sha256": "2a8d6e4cb1cdfb19da9e0c59bbb33d0b8de41b01fb7e24ac2463b827f0a3dec7",
+      "yolo_labels_sha256": "46c790e02de846f149ce4e9b9e78952c155f4dc99ef5fffd4430da137fb54e70",
+      "max_roundtrip_error_px": 4.799994712811895e-08
+    },
+    "exact_train_val_image_overlap": 0,
+    "validation_json_matches_text": true,
+    "category_ids_coco_to_yolo": {
+      "1": 0,
+      "2": 1,
+      "3": 2,
+      "4": 3
+    }
+  }
+}

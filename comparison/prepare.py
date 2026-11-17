@@ -71,7 +71,7 @@ def inspect_conversion(directory, write=False):
     audit = audit_dataset()
     reference = json.loads((PROJECT / "results/seed42-cpu/summary.json").read_bytes())["dataset"]
     for split in ("train", "val"):
-        fields = ("images", "instances", "instances_per_class", "image_manifest_sha256")
+        fields = ("images", "instances", "instances_per_class", "image_manifest_sha256", "annotations_sha256")
         if any(audit[split][k] != reference[split][k] for k in fields):
             raise ValueError(f"{split} does not match the recorded reference split")
         images_dir, labels_dir = directory / "images" / split, directory / "labels" / split

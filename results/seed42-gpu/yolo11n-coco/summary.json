@@ -1,0 +1,19 @@
+{
+  "model": "yolo11n-coco",
+  "selected_epoch": 28,
+  "actual_epochs": 30,
+  "parameters": 2590620,
+  "training_seconds": 311.6764162000036,
+  "peak_allocated_mib": 452.44482421875,
+  "checkpoint_sha256": "234763852a228a6410289a5e52f621bffaed3b2aa07967ba3333d255b5bbfd2d",
+  "verified": true,
+  "map": 0.9649879932403564,
+  "map50": 1.0,
+  "map75": 0.9991748929023743,
+  "per_class_ap": {
+    "apple": 0.9897614121437073,
+    "banana": 0.9499555826187134,
+    "orange": 0.991287112236023,
+    "pear": 0.9289477467536926
+  }
+}
