@@ -1,5 +1,9 @@
 # Local datasets and course-provided files
 fruit-detection-challenge/
+datasets/
+weights/
+*.cache
+.ultralytics/
 
 # Model artifacts
 *.pth

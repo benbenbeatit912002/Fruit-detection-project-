@@ -1,0 +1,33 @@
+[project]
+name = "fruit-detector-comparison"
+version = "0.1.0"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "ultralytics==8.3.253",
+    "torchmetrics==1.9.0",
+    "pycocotools==2.0.11",
+    "scipy", "matplotlib", "pillow", "pyyaml",
+]
+
+[project.optional-dependencies]
+cpu = ["torch==2.10.0", "torchvision==0.25.0"]
+cu128 = ["torch==2.10.0", "torchvision==0.25.0"]
+
+[tool.uv]
+package = false
+environments = ["sys_platform == 'win32' and platform_machine == 'AMD64'"]
+conflicts = [[{ extra = "cpu" }, { extra = "cu128" }]]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", extra = "cpu" }, { index = "pytorch-cu128", extra = "cu128" }]
+torchvision = [{ index = "pytorch-cpu", extra = "cpu" }, { index = "pytorch-cu128", extra = "cu128" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
