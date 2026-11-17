@@ -1,0 +1,111 @@
+{
+  "model": "ResNet-18 with two prediction heads",
+  "weights_initialization": "torchvision ResNet18_Weights.DEFAULT",
+  "parameters": 13612754,
+  "trainable_parameters": 13612754,
+  "seed": 42,
+  "epochs": 30,
+  "best_epoch": 30,
+  "image_size": [
+    512,
+    512
+  ],
+  "batch_size": 4,
+  "score_threshold": 0.05,
+  "visualization_score_threshold": 0.3,
+  "nms_iou_threshold": 0.7,
+  "ap_iou_thresholds": [
+    0.5,
+    0.55,
+    0.6,
+    0.65,
+    0.7,
+    0.75,
+    0.8,
+    0.85,
+    0.9,
+    0.95
+  ],
+  "max_detections_per_image": 100,
+  "evaluation_split": "validation",
+  "checkpoint_selection": "Highest validation mAP50-95 across the training run",
+  "map_50_95": 0.4011884033679962,
+  "map_50": 0.825491189956665,
+  "map_75": 0.32060205936431885,
+  "per_class": {
+    "apple": {
+      "ap_50_95": 0.5715162754058838,
+      "ap_50": 0.986451268196106
+    },
+    "banana": {
+      "ap_50_95": 0.24196115136146545,
+      "ap_50": 0.6835243701934814
+    },
+    "orange": {
+      "ap_50_95": 0.3609234392642975,
+      "ap_50": 0.7575443983078003
+    },
+    "pear": {
+      "ap_50_95": 0.43035274744033813,
+      "ap_50": 0.8744446635246277
+    }
+  },
+  "training_seconds": 2129.0052118999884,
+  "mean_forward_ms_excluding_first_image": 130.91587787494063,
+  "timing_scope": "Batch-one model forward only; excludes decoding, transforms and NMS",
+  "device": "cpu",
+  "torch_threads": 6,
+  "platform": "Windows",
+  "python": "3.14.5",
+  "packages": {
+    "torch": "2.12.0",
+    "torchvision": "0.27.0",
+    "torchmetrics": "1.9.0",
+    "pycocotools": "2.0.11",
+    "numpy": "2.4.6",
+    "Pillow": "12.2.0"
+  },
+  "dataset": {
+    "train": {
+      "images": 218,
+      "instances": 1603,
+      "instances_per_class": {
+        "apple": 403,
+        "banana": 290,
+        "orange": 472,
+        "pear": 438
+      },
+      "annotations_sha256": "fcfdca7dbcf85721095e9b4f218d4c70d4143d45ae4fe85aa96cb71551330c90",
+      "image_manifest_sha256": "ce1f1290dd9eaa8e94d81e76b68318fa5c0c7ce70cab5ce4c89a2fb1bd8c36ea"
+    },
+    "val": {
+      "images": 10,
+      "instances": 72,
+      "instances_per_class": {
+        "apple": 25,
+        "banana": 17,
+        "orange": 15,
+        "pear": 15
+      },
+      "annotations_sha256": "ea67417ec74e43dd22867bb6d40a45e55d4d36d9adcdf976d6c04601f6e3b64d",
+      "image_manifest_sha256": "2a8d6e4cb1cdfb19da9e0c59bbb33d0b8de41b01fb7e24ac2463b827f0a3dec7"
+    },
+    "exact_train_val_image_overlap": 0,
+    "validation_json_matches_text": true
+  },
+  "notebook_code_sha256": "b0d66a65d01b5dbe738e8b6a45eb570881aa0f762f39565c69055ec2e715237f",
+  "source_hash_format": "UTF-8 text with LF line endings",
+  "source_sha256": {
+    "object_detection_utils.py": "a8819d1c714f50a7306db20122d67eb1d92e1bb72205e0f00ca4461d90022d49",
+    "experiment_report.py": "5cd7ba86eccc4e04acce8280439986e986bb651898f02e28b36c0b49172ab806",
+    "scripts/run_notebook.py": "3d14af282b7544e4a30a032f3421c027bc431e6459eb4b5b5501833595ac0cbd",
+    "uv.lock": "f9e6c3c0583918d9bb5c8d941c023616ef77fde5f4a7e06e45b571327ac29d63"
+  },
+  "checkpoint_sha256": "d12ffe0c435f12df0a29eea5e28cd7af763dc83fba5eb97c44022a66029ffebf",
+  "limitations": [
+    "One seed; 10 validation images.",
+    "Validation data selects the checkpoint and is not an independent test set.",
+    "No comparison with another detector has been performed.",
+    "No small/medium/large-object AP is reported because boxes are normalized."
+  ]
+}

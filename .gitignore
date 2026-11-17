@@ -8,6 +8,8 @@ fruit-detection-challenge/
 
 # Generated predictions and metrics
 predictions/
+runs/
+.cache/
 val_epoch_preds.txt
 val_preds_score_*_nms_*.txt
 processed_predictions.txt

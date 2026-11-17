@@ -1,8 +1,12 @@
 torch
 torchvision
 torchmetrics
+pycocotools
 scipy
 tqdm
 matplotlib
 pillow
-git+https://github.com/drapado/d2l-wur.git
+ipykernel
+jupyterlab
+nbclient
+nbformat

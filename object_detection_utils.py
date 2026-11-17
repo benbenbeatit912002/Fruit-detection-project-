@@ -1,4 +1,3 @@
-from collections import Counter
 from scipy.optimize import linear_sum_assignment
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
@@ -9,10 +8,7 @@ from torch import nn
 import torch.nn.functional as F
 import torchvision
 from torchvision.ops.boxes import box_area
-from torchvision.transforms import ToPILImage
 from torchmetrics.detection import MeanAveragePrecision
-
-from d2l import torch as d2l
 
 
 def box_iou(boxes1, boxes2):
@@ -292,7 +288,6 @@ def plot_bbox(img, boxes, labels):
     return img
 
 
-# Well use this function later
 def plot_grid(imgs, nrows, ncols):
     """
     This function plots a grid of images using the given list of images.
@@ -526,30 +521,20 @@ class FileBasedAPCalculator:
         gt_data = self._parse_file(self.gt_file)
         pred_data = self._parse_file(self.pred_file, is_pred=True)
 
-        # Convert the parsed data to the format expected by the metric
-        for file_name in gt_data:
-            GTs = []
-            preds = []
-
-            # Convert ground truth to tensors
-            if file_name in gt_data:
-                gt_boxes = torch.tensor(gt_data[file_name]["boxes"], dtype=torch.float32)
-                gt_labels = torch.tensor(gt_data[file_name]["labels"], dtype=torch.int64)
-                GTs.append({"boxes": gt_boxes, "labels": gt_labels})
-
-            # Convert predictions to tensors if available
-            if file_name in pred_data:
-                pred_boxes = torch.tensor(pred_data[file_name]["boxes"], dtype=torch.float32)
-                pred_labels = torch.tensor(pred_data[file_name]["labels"], dtype=torch.int64)
-                pred_scores = torch.tensor(pred_data[file_name]["scores"], dtype=torch.float32)
-                preds.append({"boxes": pred_boxes, "scores": pred_scores, "labels": pred_labels})
-
-            # Skip if we don't have both predictions and ground truth
-            if not GTs or not preds:
-                continue
-
-            # Update the metric
-            self.metric.update(preds, GTs)
+        # Empty predictions count as misses; predictions on background count as false positives.
+        for file_name in sorted(gt_data.keys() | pred_data.keys()):
+            ground_truth = gt_data.get(file_name, {"boxes": [], "labels": []})
+            prediction = pred_data.get(file_name, {"boxes": [], "labels": [], "scores": []})
+            target = {
+                "boxes": torch.tensor(ground_truth["boxes"], dtype=torch.float32).reshape(-1, 4),
+                "labels": torch.tensor(ground_truth["labels"], dtype=torch.int64),
+            }
+            detection = {
+                "boxes": torch.tensor(prediction["boxes"], dtype=torch.float32).reshape(-1, 4),
+                "labels": torch.tensor(prediction["labels"], dtype=torch.int64),
+                "scores": torch.tensor(prediction["scores"], dtype=torch.float32),
+            }
+            self.metric.update([detection], [target])
 
         # Compute the results
         result = self.metric.compute()

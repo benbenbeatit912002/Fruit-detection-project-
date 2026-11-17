@@ -8,12 +8,15 @@ dependencies = [
     "torch",
     "torchvision",
     "torchmetrics",
+    "pycocotools",
     "scipy",
     "tqdm",
     "matplotlib",
     "pillow",
-    "d2l @ git+https://github.com/drapado/d2l-wur.git",
 ]
+
+[dependency-groups]
+dev = ["ipykernel", "jupyterlab", "nbclient", "nbformat"]
 
 [tool.uv]
 package = false
