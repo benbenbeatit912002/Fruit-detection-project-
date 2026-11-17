@@ -1,6 +1,7 @@
 """Train a single fresh GPU run from the repository root."""
 
 import argparse
+import hashlib
 from importlib.metadata import version
 import json
 import os
@@ -15,6 +16,7 @@ os.environ.setdefault("YOLO_CONFIG_DIR", str(Path(".cache/ultralytics").resolve(
 os.environ.setdefault("MPLCONFIGDIR", str(Path(".cache/matplotlib").resolve()))
 os.environ.setdefault("YOLO_OFFLINE", "true")
 os.environ.setdefault("YOLO_AUTOINSTALL", "false")
+Path(os.environ["YOLO_CONFIG_DIR"]).mkdir(parents=True, exist_ok=True)
 
 import numpy as np
 import torch
@@ -22,7 +24,7 @@ from torchvision.ops import nms
 
 from object_detection_utils import HungarianMatcher
 from .dual import ObjectDetectorMultiScale, detection_loss
-from .evaluation import benchmark, evaluate, SIZE, SCORE, IOU, MAX_DET
+from .evaluation import evaluate, SIZE, SCORE, IOU, MAX_DET
 from .prepare import CONVERTED, ORIGINAL, PROJECT, inspect_conversion, save_json, sha
 from .transforms import DetectionTrainTransform, FruitDetectionDataset
 
@@ -80,7 +82,7 @@ class Run:
         self.provenance = {
             "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
             "reference_commit": "d48699f", "source_sha256_lf": {
-                p.relative_to(PROJECT).as_posix(): __import__("hashlib").sha256(p.read_text(encoding="utf-8").encode()).hexdigest()
+                p.relative_to(PROJECT).as_posix(): hashlib.sha256(p.read_text(encoding="utf-8").encode()).hexdigest()
                 for p in sources},
             "hardware": hardware(), "packages": {p: version(p) for p in
                 ("torch", "torchvision", "ultralytics", "torchmetrics", "pycocotools", "numpy", "Pillow",
@@ -125,8 +127,6 @@ class Run:
             if abs(value - selected["per_class_ap"][name]) > 1e-6:
                 raise RuntimeError(f"Reloaded AP differs for {name}")
         save_json(self.directory / "predictions.json", records)
-        timing = benchmark(model, self.yolo, self.device)
-        save_json(self.directory / "benchmark.json", timing)
         summary = dict(model=self.name, selected_epoch=self.best_epoch, actual_epochs=len(self.history),
                        parameters=sum(p.numel() for p in model.parameters()),
                        training_seconds=seconds, peak_allocated_mib=peak / 2**20,

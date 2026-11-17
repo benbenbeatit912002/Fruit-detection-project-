@@ -1,7 +1,7 @@
 """Convert only the authorized training and validation splits and verify every box."""
 
 import argparse
-from collections import Counter, defaultdict
+from collections import defaultdict
 import hashlib
 import json
 import math

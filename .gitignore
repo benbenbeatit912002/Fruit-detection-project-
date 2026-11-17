@@ -4,6 +4,7 @@ datasets/
 weights/
 *.cache
 .ultralytics/
+Ultralytics/
 
 # Model artifacts
 *.pth
