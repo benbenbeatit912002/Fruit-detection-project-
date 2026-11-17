@@ -2,6 +2,8 @@
 
 This study compares two detectors trained from random initialization on the same 218 fruit images. One uses a five-stage CNN designed for this project and two prediction heads inherited from the course detector. The other uses the official Ultralytics YOLO11n architecture and trainer. Two additional runs measure practical transfer learning with an ImageNet-pretrained ResNet-18 and a COCO-pretrained YOLO11n.
 
+**Portfolio screenshots:** [Accuracy and latency](screenshots/01-benchmark.png) · [All ten validation scenes](screenshots/02-validation-set.png) · [Image 09: misses and duplicate boxes](screenshots/03-detection-example.png)
+
 ## Results
 
 **YOLO11n trained from scratch reached 83.4% validation mAP50-95; the custom CNN reached 22.4%.** The custom detector had the faster forward pass. Both ran for 30 epochs. These scores describe ten images used for checkpoint selection, rather than an independent test set.
@@ -90,5 +92,7 @@ For a follow-up, first reserve a separate, authorized test set grouped by captur
 ## Reproduction and artifacts
 
 The [reproduction commands](../../README.md#reproduce-the-gpu-comparison) cover the uv environment, data conversion, CUDA smoke test, training, benchmarking and figure export. The record for each model contains `config.json`, `provenance.json`, `history.json`, `summary.json`, `predictions.json` and `benchmark.json`. The provenance includes the source commit, LF-normalized source hashes, image and annotation fingerprints, software versions, GPU, CUDA and driver details. Selected weights remain in local `runs/` directories and are identified by SHA-256. The [complete measurement tables and gallery](measurements.md) include every validation image in COCO order at display confidence 0.30.
+
+The three 1440 × 900 portfolio screenshots can be rebuilt from the checked-in metrics and labeled figures alone. From the repository root, run `python -m scripts.capture_portfolio` with Python 3.11 and Chrome, Edge, or Chromium installed; pass `--browser PATH` to select the executable. The capture uses a temporary browser profile and local files.
 
 **CV description:** Designed a dual-scale fruit detector with a custom CNN backbone and benchmarked it against YOLO11n in four reproducible GPU experiments, measuring validation accuracy, inference latency, and detection errors.

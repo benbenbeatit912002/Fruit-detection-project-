@@ -11,6 +11,10 @@ A four-class fruit detection study on a fixed course split. The primary experime
 
 Scratch YOLO11n matched 70 of 72 labeled fruit at the display threshold, compared with 15 for the custom CNN. All four scores use the same ten images for checkpoint selection; no independent test score is claimed. Latency includes image decoding, preprocessing, the FP32 model and postprocessing at batch one.
 
+[![Ten validation scenes in order, showing per-image matches for the two scratch detectors](results/seed42-gpu/screenshots/02-validation-set.png)](results/seed42-gpu/screenshots/02-validation-set.png)
+
+**Portfolio screenshots:** [Accuracy and latency](results/seed42-gpu/screenshots/01-benchmark.png) · [All ten validation scenes](results/seed42-gpu/screenshots/02-validation-set.png) · [Four detectors on the same image](results/seed42-gpu/screenshots/03-detection-example.png)
+
 ## Reproduce the GPU comparison
 
 Run from the repository root. The comparison has its own Windows x64, Python 3.11 uv project. The original notebook uses the root lockfile. The comparison lockfile pins both PyTorch wheel choices and the official Ultralytics implementation.

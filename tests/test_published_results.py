@@ -3,7 +3,10 @@
 import json
 from pathlib import Path
 from statistics import median
+import struct
 import unittest
+
+from scripts.capture_portfolio import case_study, overview, validation_set
 
 
 ROOT = Path(__file__).resolve().parents[1] / "results" / "seed42-gpu"
@@ -15,6 +18,22 @@ def read(path):
 
 
 class PublishedResultsTests(unittest.TestCase):
+    def test_portfolio_screenshots_and_source_views(self):
+        names = ("01-benchmark", "02-validation-set", "03-detection-example")
+        for name in names:
+            with (ROOT / "screenshots" / f"{name}.png").open("rb") as image:
+                header = image.read(24)
+            self.assertEqual(header[:8], b"\x89PNG\r\n\x1a\n")
+            self.assertEqual(struct.unpack(">II", header[16:24]), (1440, 900))
+        results = overview()
+        for name in MODELS:
+            self.assertIn(f"{100 * read(f'{name}/summary.json')['map']:.1f}%", results)
+        rows = read("display_errors.json")
+        gallery = validation_set(rows)
+        indices = [gallery.index(f'Ground truth for {row["image"]}') for row in rows]
+        self.assertEqual(indices, sorted(indices))
+        self.assertIn(rows[8]["image"], case_study(rows))
+
     def test_data_fingerprints_match_historical_split(self):
         historical = read(Path("../seed42-cpu") / "summary.json")["dataset"]
         for name in MODELS:
