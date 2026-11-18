@@ -1,4 +1,4 @@
-# GPU measurements
+# Validation results
 
 All scores use the reloaded checkpoint selected on the ten validation images. AP is shown as a percentage.
 
@@ -18,9 +18,9 @@ All scores use the reloaded checkpoint selected on the ten validation images. AP
 
 Training time includes all epochs and their validation passes. Peak memory is PyTorch allocated memory during that interval. Latency uses one 512-square FP32 image on the same GPU. Each scope gets 10 warm-ups and 50 synchronized samples. Forward starts with a resident tensor. End-to-end includes warm-filesystem PNG read/decode, preprocessing, upload, model, class-wise NMS, and CPU results.
 
-![Epoch trajectories and selected checkpoints](curves.png)
+![Training loss and validation AP for all four models](figures/curves.png)
 
-## Display-threshold diagnostics
+## Detections at confidence 0.30
 
 | Detector / initialization | Correct | Missed GT | Wrong class | Duplicate | Other FP |
 |---|---:|---:|---:|---:|---:|
@@ -37,40 +37,40 @@ Every detector sees the same ten images in their original COCO order. The upper 
 
 ### 01. color_001.png
 
-![Ground truth and four detectors, validation image 1](val_01.jpg)
+![Ground truth and four detectors, validation image 1](figures/val_01.jpg)
 
 ### 02. color_002.png
 
-![Ground truth and four detectors, validation image 2](val_02.jpg)
+![Ground truth and four detectors, validation image 2](figures/val_02.jpg)
 
 ### 03. color_003.png
 
-![Ground truth and four detectors, validation image 3](val_03.jpg)
+![Ground truth and four detectors, validation image 3](figures/val_03.jpg)
 
 ### 04. color_004.png
 
-![Ground truth and four detectors, validation image 4](val_04.jpg)
+![Ground truth and four detectors, validation image 4](figures/val_04.jpg)
 
 ### 05. color_005.png
 
-![Ground truth and four detectors, validation image 5](val_05.jpg)
+![Ground truth and four detectors, validation image 5](figures/val_05.jpg)
 
 ### 06. color_006.png
 
-![Ground truth and four detectors, validation image 6](val_06.jpg)
+![Ground truth and four detectors, validation image 6](figures/val_06.jpg)
 
 ### 07. color_007.png
 
-![Ground truth and four detectors, validation image 7](val_07.jpg)
+![Ground truth and four detectors, validation image 7](figures/val_07.jpg)
 
 ### 08. color_008.png
 
-![Ground truth and four detectors, validation image 8](val_08.jpg)
+![Ground truth and four detectors, validation image 8](figures/val_08.jpg)
 
 ### 09. color_009.png
 
-![Ground truth and four detectors, validation image 9](val_09.jpg)
+![Ground truth and four detectors, validation image 9](figures/val_09.jpg)
 
 ### 10. color_010.png
 
-![Ground truth and four detectors, validation image 10](val_10.jpg)
+![Ground truth and four detectors, validation image 10](figures/val_10.jpg)

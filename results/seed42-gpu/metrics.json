@@ -1,0 +1,231 @@
+{
+  "training": {
+    "seed": 42,
+    "epochs": 30,
+    "batch": 4,
+    "input_size": 512,
+    "training_amp": true,
+    "accumulation": 1
+  },
+  "evaluation": {
+    "confidence_strict_gt": 0.05,
+    "classwise_nms_iou": 0.7,
+    "max_detections": 100,
+    "eval_precision": "float32",
+    "display_confidence_gte": 0.3
+  },
+  "dataset": {
+    "train": {
+      "images": 218,
+      "instances": 1603,
+      "instances_per_class": {
+        "apple": 403,
+        "banana": 290,
+        "orange": 472,
+        "pear": 438
+      },
+      "annotations_sha256": "fcfdca7dbcf85721095e9b4f218d4c70d4143d45ae4fe85aa96cb71551330c90",
+      "image_manifest_sha256": "ce1f1290dd9eaa8e94d81e76b68318fa5c0c7ce70cab5ce4c89a2fb1bd8c36ea",
+      "yolo_labels_sha256": "9feada24b83c4e5c8137ce0fe957b001710efab772fe200fa9a59abb1b06644f",
+      "max_roundtrip_error_px": 4.800006081495667e-08
+    },
+    "val": {
+      "images": 10,
+      "instances": 72,
+      "instances_per_class": {
+        "apple": 25,
+        "banana": 17,
+        "orange": 15,
+        "pear": 15
+      },
+      "annotations_sha256": "ea67417ec74e43dd22867bb6d40a45e55d4d36d9adcdf976d6c04601f6e3b64d",
+      "image_manifest_sha256": "2a8d6e4cb1cdfb19da9e0c59bbb33d0b8de41b01fb7e24ac2463b827f0a3dec7",
+      "yolo_labels_sha256": "46c790e02de846f149ce4e9b9e78952c155f4dc99ef5fffd4430da137fb54e70",
+      "max_roundtrip_error_px": 4.799994712811895e-08
+    },
+    "exact_train_val_image_overlap": 0,
+    "validation_json_matches_text": true,
+    "category_ids_coco_to_yolo": {
+      "1": 0,
+      "2": 1,
+      "3": 2,
+      "4": 3
+    }
+  },
+  "hardware": {
+    "name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "compute_capability": [
+      12,
+      0
+    ],
+    "memory_bytes": 8546484224,
+    "driver": "581.42",
+    "torch_cuda": "12.8",
+    "cudnn": 91002,
+    "cuda_available": true,
+    "platform": "Windows",
+    "python": "3.11.15"
+  },
+  "packages": {
+    "torch": "2.10.0+cu128",
+    "torchvision": "0.25.0+cu128",
+    "ultralytics": "8.3.253",
+    "torchmetrics": "1.9.0",
+    "pycocotools": "2.0.11",
+    "numpy": "2.4.6",
+    "Pillow": "13.0.0",
+    "opencv-python": "5.1.0.95",
+    "scipy": "1.17.1",
+    "matplotlib": "3.11.2"
+  },
+  "benchmark": {
+    "batch": 1,
+    "precision": "float32",
+    "tf32": false,
+    "warmup_per_scope": 10,
+    "timed_per_scope": 50,
+    "source_commit": "93a113d00ec6263fc3d0346fdeed632688ed0bd2"
+  },
+  "models": {
+    "custom-scratch": {
+      "initialization": "random",
+      "source_commit": "93a113d00ec6263fc3d0346fdeed632688ed0bd2",
+      "selected_epoch": 27,
+      "checkpoint_sha256": "4d62daa67e12bb605bd960bfd4941dd7275bbf1c849fa2ddcc5ae340acbd76ae",
+      "parameters": 4243378,
+      "training_seconds": 273.4100218999665,
+      "peak_allocated_mib": 302.94482421875,
+      "map": 0.22439564764499664,
+      "map50": 0.45036497712135315,
+      "map75": 0.2140619307756424,
+      "per_class_ap": {
+        "apple": 0.2448841780424118,
+        "banana": 0.05677942559123039,
+        "orange": 0.5629246830940247,
+        "pear": 0.03299430385231972
+      },
+      "latency": {
+        "forward": {
+          "median_ms": 3.750600037164986,
+          "p90_ms": 3.963409992866218
+        },
+        "end_to_end": {
+          "median_ms": 22.966000018641353,
+          "p90_ms": 23.938909987919033
+        }
+      },
+      "display_counts": {
+        "correct": 15,
+        "missed": 57,
+        "wrong_class": 2,
+        "duplicate": 0,
+        "other_fp": 0
+      }
+    },
+    "yolo11n-scratch": {
+      "initialization": "random",
+      "source_commit": "93a113d00ec6263fc3d0346fdeed632688ed0bd2",
+      "selected_epoch": 27,
+      "checkpoint_sha256": "8633b516ca6652fb29a7347316def208bf33a9446c42272107d3a5b1595b2887",
+      "parameters": 2590620,
+      "training_seconds": 315.99729460000526,
+      "peak_allocated_mib": 457.18994140625,
+      "map": 0.8339806795120239,
+      "map50": 0.9948602318763733,
+      "map75": 0.9183012843132019,
+      "per_class_ap": {
+        "apple": 0.9178842902183533,
+        "banana": 0.7257382273674011,
+        "orange": 0.9236273765563965,
+        "pear": 0.7686727046966553
+      },
+      "latency": {
+        "forward": {
+          "median_ms": 8.832849969621748,
+          "p90_ms": 9.760270023252815
+        },
+        "end_to_end": {
+          "median_ms": 25.634449964854866,
+          "p90_ms": 26.78196005290374
+        }
+      },
+      "display_counts": {
+        "correct": 70,
+        "missed": 2,
+        "wrong_class": 1,
+        "duplicate": 6,
+        "other_fp": 4
+      }
+    },
+    "resnet18-imagenet": {
+      "initialization": "ImageNet-1K",
+      "source_commit": "d01aede0d0f14956ea75ce23051d8f538da539e5",
+      "selected_epoch": 29,
+      "checkpoint_sha256": "dd75b4aa33222b319d514da95feffdfb010febac407f3463001f4213dfa59eb2",
+      "parameters": 13612754,
+      "training_seconds": 293.5335864000954,
+      "peak_allocated_mib": 461.92578125,
+      "map": 0.5670280456542969,
+      "map50": 0.9635061025619507,
+      "map75": 0.6530938148498535,
+      "per_class_ap": {
+        "apple": 0.7021854519844055,
+        "banana": 0.3117983937263489,
+        "orange": 0.6710904836654663,
+        "pear": 0.5830378532409668
+      },
+      "latency": {
+        "forward": {
+          "median_ms": 7.451400044374168,
+          "p90_ms": 8.013460005167872
+        },
+        "end_to_end": {
+          "median_ms": 26.93485002964735,
+          "p90_ms": 27.746670064516366
+        }
+      },
+      "display_counts": {
+        "correct": 66,
+        "missed": 6,
+        "wrong_class": 0,
+        "duplicate": 5,
+        "other_fp": 0
+      }
+    },
+    "yolo11n-coco": {
+      "initialization": "COCO",
+      "source_commit": "93a113d00ec6263fc3d0346fdeed632688ed0bd2",
+      "selected_epoch": 28,
+      "checkpoint_sha256": "234763852a228a6410289a5e52f621bffaed3b2aa07967ba3333d255b5bbfd2d",
+      "parameters": 2590620,
+      "training_seconds": 311.6764162000036,
+      "peak_allocated_mib": 452.44482421875,
+      "map": 0.9649879932403564,
+      "map50": 1.0,
+      "map75": 0.9991748929023743,
+      "per_class_ap": {
+        "apple": 0.9897614121437073,
+        "banana": 0.9499555826187134,
+        "orange": 0.991287112236023,
+        "pear": 0.9289477467536926
+      },
+      "latency": {
+        "forward": {
+          "median_ms": 8.412800030782819,
+          "p90_ms": 9.55325998365879
+        },
+        "end_to_end": {
+          "median_ms": 25.8100499631837,
+          "p90_ms": 26.910330017562956
+        }
+      },
+      "display_counts": {
+        "correct": 72,
+        "missed": 0,
+        "wrong_class": 1,
+        "duplicate": 1,
+        "other_fp": 4
+      }
+    }
+  }
+}

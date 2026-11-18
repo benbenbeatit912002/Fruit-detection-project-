@@ -32,6 +32,9 @@ ORDER = ("custom-scratch", "yolo11n-scratch", "resnet18-imagenet", "yolo11n-coco
 COLORS = ["#14689a", "#9c4035", "#347251", "#80418a"]
 DISPLAY = .30
 ERROR_KEYS = ["correct", "missed", "wrong_class", "duplicate", "other_fp"]
+TRAIN_FIELDS = ("seed", "epochs", "batch", "input_size", "training_amp", "accumulation")
+EVAL_FIELDS = ("confidence_strict_gt", "classwise_nms_iou", "max_detections", "eval_precision")
+BENCH_FIELDS = ("batch", "precision", "tf32", "warmup_per_scope", "timed_per_scope", "source_commit")
 
 
 def read(path):
@@ -172,33 +175,72 @@ def crosscheck_archived_evaluator(run):
     return dict(file_based_metrics=metrics, max_absolute_difference=max(differences))
 
 
-def export(local, output):
+def compact_metrics(runs, errors):
+    reference = runs[ORDER[0]]
+    config, provenance, bench = (reference[k] for k in ("config", "provenance", "benchmark"))
+    models = {}
+    for name in ORDER:
+        run = runs[name]
+        summary, timing = run["summary"], run["benchmark"]
+        models[name] = {
+            "initialization": run["config"]["initialization"],
+            "source_commit": run["provenance"]["source_commit"],
+            **{k: summary[k] for k in ("selected_epoch", "checkpoint_sha256", "parameters", "training_seconds",
+                                       "peak_allocated_mib", "map", "map50", "map75", "per_class_ap")},
+            "latency": {scope: {k: timing[scope][k] for k in ("median_ms", "p90_ms")}
+                        for scope in ("forward", "end_to_end")},
+            "display_counts": {k: sum(row["models"][name][k] for row in errors) for k in ERROR_KEYS},
+        }
+    return {
+        "training": {k: config[k] for k in TRAIN_FIELDS},
+        "evaluation": {**{k: config[k] for k in EVAL_FIELDS},
+                       "display_confidence_gte": DISPLAY},
+        "dataset": provenance["dataset"],
+        "hardware": provenance["hardware"],
+        "packages": provenance["packages"],
+        "benchmark": {k: bench[k] for k in BENCH_FIELDS},
+        "models": models,
+    }
+
+
+def export(local, output, diagnostics=None):
     runs = {name: {key: read(local / name / f"{key}.json") for key in
                    ("summary", "history", "config", "benchmark", "provenance", "predictions")} for name in MODELS}
+    reference = runs[ORDER[0]]
     for name, run in runs.items():
         s, c, b = run["summary"], run["config"], run["benchmark"]
+        for section, fields in (("config", TRAIN_FIELDS + EVAL_FIELDS), ("benchmark", BENCH_FIELDS),
+                                ("provenance", ("dataset", "hardware", "packages"))):
+            if any(run[section][k] != reference[section][k] for k in fields):
+                raise ValueError(f"Inconsistent {section} across runs: {name}")
         if not (s["verified"] and s["actual_epochs"] == len(run["history"]) == 30 and
+                [r["epoch"] for r in run["history"]] == list(range(1, c["epochs"]+1)) and
                 s["selected_epoch"] == 1 + np.argmax([r["map"] for r in run["history"]]) and
                 len(run["predictions"]) == 10 and c["seed"] == 42 and
-                b["checkpoint_sha256"] == s["checkpoint_sha256"] and b["tf32"] is False and
-                run["provenance"]["dataset"] == runs[MODELS[0]]["provenance"]["dataset"]):
+                b["checkpoint_sha256"] == s["checkpoint_sha256"] and b["tf32"] is False):
             raise ValueError(f"Incomplete or inconsistent run: {name}")
-    output.mkdir(parents=True, exist_ok=True)
-    curves(output, runs)
-    errors = gallery(output, runs)
-    save_json(output / "display_errors.json", errors)
+        for scope in ("forward", "end_to_end"):
+            samples = b[scope]["samples_ms"]
+            if not (len(samples) == b["timed_per_scope"] == 50 and min(samples) > 0 and
+                    np.isclose(np.median(samples), b[scope]["median_ms"]) and
+                    np.isclose(np.percentile(samples, 90), b[scope]["p90_ms"])):
+                raise ValueError(f"Inconsistent {scope} latency samples for {name}")
     crosscheck = {name: crosscheck_archived_evaluator(run) for name, run in runs.items()}
     for name, check in crosscheck.items():
         if not check["max_absolute_difference"] <= 1e-6:
             raise ValueError(f"Archived evaluator differs from common metrics for {name}: {check}")
-    save_json(output / "evaluator_crosscheck.json", crosscheck)
-    shutil.copyfile(CONVERTED / "conversion.jpg", output / "conversion.jpg")
-    for name, run in runs.items():
-        folder = output / name
-        folder.mkdir(exist_ok=True)
-        for key, data in run.items():
-            save_json(folder / f"{key}.json", data)
-    md = ["# GPU measurements", "",
+    figures = output / "figures"
+    figures.mkdir(parents=True, exist_ok=True)
+    curves(figures, runs)
+    errors = gallery(figures, runs)
+    metrics = compact_metrics(runs, errors)
+    save_json(output / "metrics.json", metrics)
+    if diagnostics is not None:
+        diagnostics.mkdir(parents=True, exist_ok=True)
+        save_json(diagnostics / "display_errors.json", errors)
+        save_json(diagnostics / "evaluator_crosscheck.json", crosscheck)
+    shutil.copyfile(CONVERTED / "conversion.jpg", figures / "conversion.jpg")
+    md = ["# Validation results", "",
           "All scores use the reloaded checkpoint selected on the ten validation images. AP is shown as a percentage.",
           "", "| Detector / initialization | Epoch | mAP50-95 | mAP50 | mAP75 | Apple AP | Banana AP | Orange AP | Pear AP |",
           "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
@@ -216,11 +258,11 @@ def export(local, output):
     md += ["", "Training time includes all epochs and their validation passes. Peak memory is PyTorch allocated memory during that interval. "
            "Latency uses one 512-square FP32 image on the same GPU. Each scope gets 10 warm-ups and 50 synchronized samples. "
            "Forward starts with a resident tensor. End-to-end includes warm-filesystem PNG read/decode, preprocessing, upload, model, class-wise NMS, and CPU results.",
-           "", "![Epoch trajectories and selected checkpoints](curves.png)", "", "## Display-threshold diagnostics", "",
+           "", "![Training loss and validation AP for all four models](figures/curves.png)", "", "## Detections at confidence 0.30", "",
            "| Detector / initialization | Correct | Missed GT | Wrong class | Duplicate | Other FP |",
            "|---|---:|---:|---:|---:|---:|"]
     for name in ORDER:
-        counts = [sum(r["models"][name][k] for r in errors) for k in ERROR_KEYS]
+        counts = [metrics["models"][name]["display_counts"][k] for k in ERROR_KEYS]
         md.append("| " + NAMES[name] + " | " + " | ".join(map(str, counts)) + " |")
     md += ["", "At score >= 0.30, match boxes in descending confidence order at IoU >= 0.50. "
            "Each ground truth can match once. An extra match to the same class is a duplicate. "
@@ -230,7 +272,7 @@ def export(local, output):
            "Every detector sees the same ten images in their original COCO order. The upper pair compares the two scratch models. "
            "The lower pair shows transfer learning. Each model's displayed boxes use its own scores at the same fixed threshold. Validation photos reproduced with permission."]
     for i, row in enumerate(errors, 1):
-        md += ["", f"### {i:02d}. {row['image']}", "", f"![Ground truth and four detectors, validation image {i}](val_{i:02d}.jpg)"]
+        md += ["", f"### {i:02d}. {row['image']}", "", f"![Ground truth and four detectors, validation image {i}](figures/val_{i:02d}.jpg)"]
     (output / "measurements.md").write_text("\n".join(md) + "\n", encoding="utf-8")
 
 
@@ -238,5 +280,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, default=PROJECT / "runs/gpu-seed42")
     parser.add_argument("--output", type=Path, default=PROJECT / "results/seed42-gpu")
+    parser.add_argument("--diagnostics", type=Path, help="Optional local directory for per-image counts and evaluator checks")
     args = parser.parse_args()
-    export(args.input, args.output)
+    export(args.input, args.output, args.diagnostics)
