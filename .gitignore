@@ -1,5 +1,10 @@
 # Local datasets and course-provided files
 fruit-detection-challenge/
+datasets/
+weights/
+*.cache
+.ultralytics/
+Ultralytics/
 
 # Model artifacts
 *.pth
@@ -31,3 +36,11 @@ ENV/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
+
+# Publish the GPU report, not the intermediate exports.
+/results/seed42-gpu/*
+!/results/seed42-gpu/README.md
+!/results/seed42-gpu/measurements.md
+!/results/seed42-gpu/metrics.json
+!/results/seed42-gpu/figures/
+!/results/seed42-gpu/screenshots/
